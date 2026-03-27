@@ -29,6 +29,7 @@ class CollegeResult(BaseModel):
     opening_rank: int
     closing_rank: int
     rank_gap: int
+    chance_category: str
     priority: int      # 1=IIT, 2=NIT, 3=IIIT, 4=GFTI
 
 class PredictResponse(BaseModel):

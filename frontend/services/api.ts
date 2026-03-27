@@ -23,6 +23,7 @@ export interface CollegeResult {
   opening_rank: number;
   closing_rank: number;
   rank_gap: number;
+  chance_category: string;
   priority: number;
 }
 

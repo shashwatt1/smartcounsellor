@@ -26,9 +26,18 @@ export default function ResultsTable({ results, userRank }: ResultsTableProps) {
 
   // Visual cues for safety margin (rank gap)
   const getGapColor = (gap: number) => {
-    if (gap < 100) return "text-red-700 bg-red-50 border-red-200"; // Borderline
-    if (gap < 500) return "text-orange-700 bg-orange-50 border-orange-200"; // Safe
-    return "text-emerald-700 bg-emerald-50 border-emerald-200"; // Very safe
+    if (gap < 0) return "text-red-700 bg-red-50 border-red-200"; // Negative
+    if (gap < 200) return "text-orange-700 bg-orange-50 border-orange-200"; // Close call
+    return "text-emerald-700 bg-emerald-50 border-emerald-200"; // Safe
+  };
+
+  const getChanceColor = (chance: string) => {
+    switch(chance) {
+      case "Safe": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "Moderate": return "bg-amber-100 text-amber-800 border-amber-200";
+      case "Dream": return "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200";
+      default: return "bg-slate-100 text-slate-800 border-slate-200";
+    }
   };
 
   const getTypeColor = (type: string) => {
@@ -49,10 +58,11 @@ export default function ResultsTable({ results, userRank }: ResultsTableProps) {
             <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
               <th className="py-4 px-6">Institute</th>
               <th className="py-4 px-6">Branch</th>
-              <th className="py-4 px-6">Type</th>
-              <th className="py-4 px-6">Quota</th>
-              <th className="py-4 px-6 text-right">Closing Rank</th>
-              <th className="py-4 px-6 text-right">Rank Gap</th>
+              <th className="py-4 px-6">Category</th>
+              <th className="py-4 px-6 text-center">Chance</th>
+              <th className="py-4 px-6 text-right">Opening</th>
+              <th className="py-4 px-6 text-right">Closing</th>
+              <th className="py-4 px-6 text-right">Gap</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -61,7 +71,7 @@ export default function ResultsTable({ results, userRank }: ResultsTableProps) {
               
               return (
                 <tr 
-                  key={`${result.institute}-${result.program}-${result.quota}`}
+                  key={`${result.institute}-${result.program}-${result.quota}-${idx}`}
                   className={`transition-colors hover:bg-slate-50 ${isTopMatch ? 'bg-blue-50/40 relative' : ''}`}
                 >
                   <td className="py-4 px-6">
@@ -77,7 +87,7 @@ export default function ResultsTable({ results, userRank }: ResultsTableProps) {
                       )}
                     </div>
                   </td>
-                  <td className="py-4 px-6 whitespace-normal min-w-[250px]">
+                  <td className="py-4 px-6 whitespace-normal min-w-[200px]">
                     <div className="font-medium text-slate-700" title={result.program}>
                       {result.branch}
                     </div>
@@ -86,21 +96,31 @@ export default function ResultsTable({ results, userRank }: ResultsTableProps) {
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${getTypeColor(result.college_type)}`}>
-                      {result.college_type}
+                    <div className="flex flex-col gap-1.5 items-start">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${getTypeColor(result.college_type)}`}>
+                        {result.college_type}
+                      </span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                        {result.quota} Quota
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    <span 
+                      className={`inline-flex items-center justify-center px-3 py-1 rounded-md text-xs font-bold border ${getChanceColor(result.chance_category)} shadow-sm`}
+                    >
+                      {result.chance_category}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                      {result.quota}
-                    </span>
+                  <td className="py-4 px-6 text-right text-slate-500 font-medium text-sm">
+                    {result.opening_rank > 0 ? result.opening_rank.toLocaleString() : '-'}
                   </td>
                   <td className="py-4 px-6 text-right font-bold text-slate-900">
                     {result.closing_rank.toLocaleString()}
                   </td>
                   <td className="py-4 px-6 text-right">
                     <span 
-                      className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-sm font-bold border ${getGapColor(result.rank_gap)} shadow-sm`}
+                      className={`inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold border ${getGapColor(result.rank_gap)} bg-white`}
                       title="Margin between your rank and the closing rank"
                     >
                       {result.rank_gap > 0 ? '+' : ''}{result.rank_gap.toLocaleString()}
