@@ -35,7 +35,7 @@ export interface PredictResponse {
 }
 
 export async function fetchPredictions(request: PredictRequest): Promise<PredictResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/predict`, {
+ const API_URL = "https://smartcounsellor.onrender.com";, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
