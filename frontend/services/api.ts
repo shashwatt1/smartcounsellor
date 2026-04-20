@@ -34,15 +34,24 @@ export interface PredictResponse {
   results: CollegeResult[];
 }
 
+/**
+ * Using your live Render backend URL.
+ * If you run locally, it will prioritize the environment variable if set.
+ */
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://smartcounsellor.onrender.com";
+
 export async function fetchPredictions(request: PredictRequest): Promise<PredictResponse> {
- const API_URL = "https://smartcounsellor.onrender.com";, {
+  const response = await fetch(`${API_BASE_URL}/api/predict`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(request),
   });
   
   if (!response.ok) {
-    throw new Error("Failed to fetch predictions");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to fetch predictions from the server");
   }
   
   return response.json();
