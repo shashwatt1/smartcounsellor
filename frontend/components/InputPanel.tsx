@@ -38,9 +38,9 @@ export default function InputPanel({ onPredict, isLoading }: InputPanelProps) {
       exam_type: examType,
       rank: Number(rank),
       category,
-      college_type: collegeType,
+      college_type: examType === "JEE_ADVANCED" ? "IIT" : collegeType,
       gender,
-      home_state: showHomeState ? (homeState || null) : null,
+      home_state: (examType === "JEE_MAIN" && showHomeState) ? (homeState || null) : null,
       include_five_year: includeFiveYear,
     });
   };
@@ -184,7 +184,7 @@ export default function InputPanel({ onPredict, isLoading }: InputPanelProps) {
         {/* Submit */}
         <button
           type="submit"
-          disabled={isLoading || !rank || (showHomeState && !homeState)}
+          disabled={isLoading || !rank || (examType === "JEE_MAIN" && showHomeState && !homeState)}
           className="w-full sm:w-auto px-8 py-3 bg-slate-900 text-white font-medium rounded-xl hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 focus:ring-4 focus:ring-slate-900/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none transition-all"
         >
           {isLoading ? (
