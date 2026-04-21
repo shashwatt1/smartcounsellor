@@ -2,7 +2,10 @@ export type Category = "OPEN" | "OBC-NCL" | "SC" | "ST" | "EWS";
 export type CollegeType = "IIT" | "NIT" | "IIIT" | "GFTI" | "ALL";
 export type Gender = "Gender-Neutral" | "Female-only";
 
+export type ExamType = "JEE_MAIN" | "JEE_ADVANCED";
+
 export interface PredictRequest {
+  exam_type?: ExamType;
   rank: number;
   category: Category;
   college_type: CollegeType;
@@ -24,6 +27,7 @@ export interface CollegeResult {
   closing_rank: number;
   rank_gap: number;
   chance_category: string;
+  branch_priority: number;
   priority: number;
 }
 
@@ -33,6 +37,8 @@ export interface PredictResponse {
   college_type: string;
   total_results: number;
   results: CollegeResult[];
+  developed_by?: string;
+  linkedin?: string;
 }
 
 /**

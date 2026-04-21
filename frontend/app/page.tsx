@@ -136,7 +136,7 @@ export default function Home() {
       <footer className="mt-auto bg-white border-t border-slate-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-start items-center">
           <p className="text-sm font-medium text-slate-500">
-            Developed by <span className="text-blue-600 font-bold">Shashwat Malviya</span>
+            Developed by <a href={response?.linkedin || "https://www.linkedin.com/in/shashwatt1/"} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline hover:text-blue-700 transition-colors">{response?.developed_by || "Shashwat Malviya"}</a>
           </p>
         </div>
       </footer>
