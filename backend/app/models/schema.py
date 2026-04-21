@@ -10,7 +10,7 @@ GENDERS = Literal["Gender-Neutral", "Female-only"]
 EXAM_TYPES = Literal["JEE_MAIN", "JEE_ADVANCED"]
 
 class PredictRequest(BaseModel):
-    exam_type: EXAM_TYPES = Field(default="JEE_MAIN", description="Exam type (JEE_MAIN or JEE_ADVANCED)")
+    exam_type: EXAM_TYPES = Field(..., description="Exam type (JEE_MAIN or JEE_ADVANCED)")
     rank: int = Field(..., gt=0, description="Category Rank (e.g. your rank in EWS, or CRL in OPEN)")
     category: CATEGORIES = Field(default="OPEN")
     college_type: COLLEGE_TYPES = Field(default="ALL")

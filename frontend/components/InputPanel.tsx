@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PredictRequest, Category, CollegeType, Gender } from "@/services/api";
+import { PredictRequest, Category, CollegeType, Gender, ExamType } from "@/services/api";
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -19,6 +19,7 @@ interface InputPanelProps {
 }
 
 export default function InputPanel({ onPredict, isLoading }: InputPanelProps) {
+  const [examType, setExamType] = useState<ExamType>("JEE_MAIN");
   const [rank, setRank] = useState<number | "">("");
   const [category, setCategory] = useState<Category>("OPEN");
   const [collegeType, setCollegeType] = useState<CollegeType>("ALL");
@@ -34,6 +35,7 @@ export default function InputPanel({ onPredict, isLoading }: InputPanelProps) {
     if (!rank || rank <= 0) return;
     
     onPredict({
+      exam_type: examType,
       rank: Number(rank),
       category,
       college_type: collegeType,
@@ -47,6 +49,22 @@ export default function InputPanel({ onPredict, isLoading }: InputPanelProps) {
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
+        {/* Exam Type */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Exam Type
+          </label>
+          <select
+            value={examType}
+            onChange={(e) => setExamType(e.target.value as ExamType)}
+            className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-800"
+            disabled={isLoading}
+          >
+            <option value="JEE_MAIN">JEE Main (NIT/IIIT/GFTI)</option>
+            <option value="JEE_ADVANCED">JEE Advanced (IIT)</option>
+          </select>
+        </div>
+
         {/* Rank Input */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -100,26 +118,27 @@ export default function InputPanel({ onPredict, isLoading }: InputPanelProps) {
         </div>
 
         {/* College Type */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Target Institutes
-          </label>
-          <select
-            value={collegeType}
-            onChange={(e) => setCollegeType(e.target.value as CollegeType)}
-            className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-800"
-            disabled={isLoading}
-          >
-            <option value="ALL">All Institutes (IIT, NIT, IIIT, GFTI)</option>
-            <option value="IIT">IITs Only</option>
-            <option value="NIT">NITs Only</option>
-            <option value="IIIT">IIITs Only</option>
-            <option value="GFTI">GFTIs Only</option>
-          </select>
-        </div>
+        {examType === "JEE_MAIN" && (
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Target Institutes
+            </label>
+            <select
+              value={collegeType}
+              onChange={(e) => setCollegeType(e.target.value as CollegeType)}
+              className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-800"
+              disabled={isLoading}
+            >
+              <option value="ALL">All Institutes (NIT, IIIT, GFTI)</option>
+              <option value="NIT">NITs Only</option>
+              <option value="IIIT">IIITs Only</option>
+              <option value="GFTI">GFTIs Only</option>
+            </select>
+          </div>
+        )}
 
         {/* Home State (Conditional) */}
-        {showHomeState ? (
+        {showHomeState && examType === "JEE_MAIN" ? (
           <div className="animate-in fade-in slide-in-from-top-2 duration-300">
             <label className="block text-sm font-medium text-slate-700 mb-2 text-blue-700">
               Home State (For NIT/GFTI Quotas)

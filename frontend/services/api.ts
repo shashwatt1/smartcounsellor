@@ -5,7 +5,7 @@ export type Gender = "Gender-Neutral" | "Female-only";
 export type ExamType = "JEE_MAIN" | "JEE_ADVANCED";
 
 export interface PredictRequest {
-  exam_type?: ExamType;
+  exam_type: ExamType;
   rank: number;
   category: Category;
   college_type: CollegeType;

@@ -115,28 +115,44 @@ def predict_colleges(request: PredictRequest) -> PredictResponse:
             priority=_PRIORITY.get(ctype, 5)
         ))
 
-    # 6. Sorting & Extraction logic
-    # Safe Options
-    safe_results = [r for r in results if r.closing_rank >= request.rank]
-    safe_results.sort(key=lambda x: (x.rank_gap, x.branch_priority))
-    top_safe = safe_results[:2]
-    
-    # HS Options (NIT ONLY)
-    hs_results = [r for r in results if r.quota == "HS" and r.college_type == "NIT"]
-    hs_results.sort(key=lambda x: (x.rank_gap, x.branch_priority))
-    top_hs = hs_results[:2]
-    
-    # Remaining results
-    used_ids = {id(r) for r in top_safe + top_hs}
-    remaining = [r for r in results if id(r) not in used_ids]
-    remaining.sort(key=lambda x: (x.rank_gap, x.branch_priority))
-    
-    remaining_needed = 5 - len(top_safe) - len(top_hs)
-    top_remaining = remaining[:remaining_needed] if remaining_needed > 0 else []
-    
-    # Combine
-    top_results = top_hs + top_safe + top_remaining
-    top_results = top_results[:5]
+    # 6. Sorting & Extraction logic based on exam type
+    if request.exam_type == "JEE_MAIN":
+        # Safe Options
+        safe_results = [r for r in results if r.closing_rank >= request.rank]
+        safe_results.sort(key=lambda x: (x.rank_gap, x.branch_priority))
+        top_safe = safe_results[:2]
+        
+        # HS Options (NIT ONLY)
+        hs_results = [r for r in results if r.quota == "HS" and r.college_type == "NIT"]
+        hs_results.sort(key=lambda x: (x.rank_gap, x.branch_priority))
+        top_hs = hs_results[:2]
+        
+        # Remaining results
+        used_ids = {id(r) for r in top_safe + top_hs}
+        remaining = [r for r in results if id(r) not in used_ids]
+        remaining.sort(key=lambda x: (x.rank_gap, x.branch_priority))
+        
+        remaining_needed = 5 - len(top_safe) - len(top_hs)
+        top_remaining = remaining[:remaining_needed] if remaining_needed > 0 else []
+        
+        # Combine
+        top_results = top_hs + top_safe + top_remaining
+        top_results = top_results[:5]
+        
+    else:
+        # JEE_ADVANCED flow
+        # Safe Options
+        safe_results = [r for r in results if r.closing_rank >= request.rank]
+        safe_results.sort(key=lambda x: (x.rank_gap, x.branch_priority))
+        
+        # Remaining results
+        used_ids = {id(r) for r in safe_results}
+        remaining = [r for r in results if id(r) not in used_ids]
+        remaining.sort(key=lambda x: (x.rank_gap, x.branch_priority))
+        
+        # Combine blindly without HS logic
+        top_results = safe_results + remaining
+        top_results = top_results[:5]
 
     return PredictResponse(
         rank=request.rank,
