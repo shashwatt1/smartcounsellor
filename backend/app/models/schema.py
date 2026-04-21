@@ -7,8 +7,10 @@ from typing import List, Literal, Optional
 CATEGORIES = Literal["OPEN", "OBC-NCL", "SC", "ST", "EWS"]
 COLLEGE_TYPES = Literal["IIT", "NIT", "IIIT", "GFTI", "ALL"]
 GENDERS = Literal["Gender-Neutral", "Female-only"]
+EXAM_TYPES = Literal["JEE_MAIN", "JEE_ADVANCED"]
 
 class PredictRequest(BaseModel):
+    exam_type: EXAM_TYPES = Field(default="JEE_MAIN", description="Exam type (JEE_MAIN or JEE_ADVANCED)")
     rank: int = Field(..., gt=0, description="Category Rank (e.g. your rank in EWS, or CRL in OPEN)")
     category: CATEGORIES = Field(default="OPEN")
     college_type: COLLEGE_TYPES = Field(default="ALL")
@@ -30,6 +32,7 @@ class CollegeResult(BaseModel):
     closing_rank: int
     rank_gap: int
     chance_category: str
+    branch_priority: int
     priority: int      # 1=IIT, 2=NIT, 3=IIIT, 4=GFTI
 
 class PredictResponse(BaseModel):
@@ -38,3 +41,5 @@ class PredictResponse(BaseModel):
     college_type: str
     total_results: int
     results: List[CollegeResult]
+    developed_by: str = Field(default="Shashwat Malviya")
+    linkedin: str = Field(default="https://www.linkedin.com/in/shashwatt1/")
